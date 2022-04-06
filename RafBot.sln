@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RafBot", "RafBot\RafBot.csproj", "{535C0AB2-BFE6-4190-9BC2-9C5F6E07DEAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker-compose", "docker-compose", "{9B38EA15-E5C9-4D97-9B84-50BD03D8B2B6}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		docker-compose.override.yml = docker-compose.override.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{535C0AB2-BFE6-4190-9BC2-9C5F6E07DEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{535C0AB2-BFE6-4190-9BC2-9C5F6E07DEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{535C0AB2-BFE6-4190-9BC2-9C5F6E07DEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{535C0AB2-BFE6-4190-9BC2-9C5F6E07DEAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

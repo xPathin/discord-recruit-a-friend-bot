@@ -1,0 +1,13 @@
+
+version: '3.4'
+
+services:
+  rafbot:
+    image: rafbot
+    build:
+      context: .
+      dockerfile: RafBot/Dockerfile
+    volumes:
+      - "./data:/app/data"
+    environment:
+      - "BOT_TOKEN=${BOT_TOKEN:?}"
