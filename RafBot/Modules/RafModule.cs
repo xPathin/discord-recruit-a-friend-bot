@@ -328,7 +328,7 @@ public class RafModule : ModuleBase<SocketCommandContext>
                 }
 
                 var pending = false;
-                if (DateTime.Now - userInvite.JoinDate < new TimeSpan(0, 0, 15, 0))
+                if (DateTime.Now - userInvite.JoinDate < new TimeSpan(0, 0, 15, 0) && _rafSettings!.RafActive)
                 {
                     pending = true;
                 }
