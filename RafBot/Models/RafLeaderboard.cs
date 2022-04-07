@@ -40,7 +40,7 @@ public partial class RafLeaderboard
         eb.WithCurrentTimestamp();
 
         var i = 0;
-        foreach (var leaderboardEntry in LeaderboardEntries.OrderByDescending(x => x.Invites).Take(10))
+        foreach (var leaderboardEntry in LeaderboardEntries.OrderByDescending(x => x.Invites).ThenByDescending(x => x.PendingInvites).Take(10))
         {
             sb.AppendLine(
                 $"**{++i}.**\t<@{leaderboardEntry.InviterUser.Id}>\t**·**\t**{leaderboardEntry.Invites}** invites. (**{leaderboardEntry.PendingInvites}** pending - **{leaderboardEntry.PendingInvites + leaderboardEntry.Invites}** total)");

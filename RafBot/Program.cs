@@ -164,6 +164,7 @@ internal class Program
     private async Task OnClientConnectedAsync()
     {
         await _semaphoreSlim.WaitAsync();
+        await _client.DownloadUsersAsync(_client.Guilds);
         try
         {
             using var scope = _serviceProvider.CreateScope();
