@@ -164,7 +164,6 @@ internal class Program
     private async Task OnClientConnectedAsync()
     {
         await _semaphoreSlim.WaitAsync();
-        await _client.DownloadUsersAsync(_client.Guilds);
         try
         {
             using var scope = _serviceProvider.CreateScope();
@@ -202,8 +201,12 @@ internal class Program
         return new ServiceCollection()
             .AddSingleton(_ =>
             {
-                var cfg = new DiscordSocketConfig();
-                cfg.GatewayIntents |= GatewayIntents.GuildMembers;
+                var cfg = new DiscordSocketConfig
+                {
+                    GatewayIntents = GatewayIntents.All,
+                    AlwaysDownloadUsers = true,
+                };
+
                 return new DiscordSocketClient(cfg);
             })
             .AddSingleton<CommandService>()
