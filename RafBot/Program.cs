@@ -25,8 +25,6 @@ namespace RafBot;
 internal class Program
 {
     private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-    private readonly string _databasePath = Path.Combine(Environment.ProcessPath ?? string.Empty, "data", "app.db");
     private IServiceProvider _serviceProvider = default!;
     private DiscordSocketClient _client = default!;
 
@@ -53,7 +51,6 @@ internal class Program
         // when you are finished using it, at the end of your app's lifetime.
         // If you use another dependency injection framework, you should inspect
         // its documentation for the best way to do this.
-        var dbFolder = Path.GetDirectoryName(_databasePath);
         if (!Directory.Exists("data"))
         {
             Directory.CreateDirectory("data");
