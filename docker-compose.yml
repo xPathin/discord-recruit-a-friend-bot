@@ -4,6 +4,7 @@ version: '3.4'
 services:
   rafbot:
     image: rafbot
+    restart: always
     build:
       context: .
       dockerfile: RafBot/Dockerfile
