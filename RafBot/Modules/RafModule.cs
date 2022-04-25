@@ -155,6 +155,79 @@ public class RafModule : ModuleBase<SocketCommandContext>
     }
 
     /// <summary>
+    /// !raf awardrole command.
+    /// Awards an role to raf users.
+    /// </summary>
+    /// <param name="awardRole">The role to award.</param>
+    /// <param name="minInvites">The minimum number of invites a user must have to get awarded this role.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    [RequireContext(ContextType.Guild)]
+    [RequireUserPermission(GuildPermission.ManageGuild)]
+    [RequireBotPermission(GuildPermission.ManageGuild)]
+    [Command("awardrole")]
+    public async Task RafAwardRoleAsync(IRole awardRole, uint? minInvites = null)
+    {
+        var eb = new EmbedBuilder()
+        {
+            Title = "RAF-Bot Award",
+            Color = Color.Green,
+        };
+        if (_rafSettings!.RafActive)
+        {
+            eb.Color = Color.Red;
+            eb.Title = $"❌ {eb.Title}";
+            eb.Description = "The event is still running, please first type ``!raf stop.`` to stop the event.";
+            await ReplyAsync(embed: eb.Build());
+            return;
+        }
+
+        var requiredInviteCount = minInvites ?? 0;
+
+        var totalAwarded = 0;
+        var totalSkipped = 0;
+
+        foreach (var inviteCode in _dbContext.InviteCodes)
+        {
+            var inviter = Context.Guild.GetUser(inviteCode.UserId);
+            if (inviter == null)
+            {
+                totalSkipped++;
+                continue;
+            }
+
+            var totalInvites = 0;
+
+            if (requiredInviteCount > 0)
+            {
+                foreach (var userInvite in _dbContext.UserInvites.Where(x => x.InviteCode.Code.Equals(inviteCode.Code)))
+                {
+                    if (!await _rafSettings!.IsPendingInviteAsync(userInvite))
+                    {
+                        totalInvites++;
+                    }
+                }
+            }
+
+            if (totalInvites >= requiredInviteCount)
+            {
+                if (!inviter.Roles.Any(x => x.Id.Equals(awardRole.Id)))
+                {
+                    await inviter.AddRoleAsync(awardRole);
+                    totalAwarded++;
+                }
+                else
+                {
+                    totalSkipped++;
+                }
+            }
+        }
+
+        eb.Title = $"✅ {eb.Title}";
+        eb.Description = $"Done, we awarded the Role: <@{awardRole.Name}> to {totalAwarded} users. ({totalSkipped} skipped)";
+        await ReplyAsync(embed: eb.Build());
+    }
+
+    /// <summary>
     /// !raf stop command.
     /// Stops the event.
     /// </summary>
@@ -327,18 +400,7 @@ public class RafModule : ModuleBase<SocketCommandContext>
                     continue;
                 }
 
-                var pending = false;
-                if (DateTime.Now - userInvite.JoinDate < new TimeSpan(0, 0, 15, 0) && _rafSettings!.RafActive)
-                {
-                    pending = true;
-                }
-                else if (_rafSettings!.RafVerifiedRoleId != null)
-                {
-                    var verifiedRole = Context.Guild.GetRole(_rafSettings!.RafVerifiedRoleId.Value);
-                    pending = !invitedUser.Roles.Contains(verifiedRole);
-                }
-
-                if (pending)
+                if (await _rafSettings!.IsPendingInviteAsync(userInvite))
                 {
                     leaderboardEntry.PendingInvites++;
                 }

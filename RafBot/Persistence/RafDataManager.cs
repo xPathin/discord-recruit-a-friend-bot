@@ -2,6 +2,7 @@
 // Copyright (c) palow. All rights reserved.
 // </copyright>
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -293,5 +294,33 @@ public class RafDataManager
         }
 
         await _appDbContext.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Checks if an invitation for a user is still pending.
+    /// </summary>
+    /// <param name="userInvite">The user invite.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task<bool> IsPendingInviteAsync(UserInvite userInvite)
+    {
+        var invitedUser = await _guild.GetUserAsync(userInvite.InvitedUserId);
+        if (invitedUser == null)
+        {
+            return true;
+        }
+
+        var pending = false;
+
+        if (DateTime.Now - userInvite.JoinDate < new TimeSpan(0, 0, 15, 0) && RafActive)
+        {
+            pending = true;
+        }
+        else if (RafVerifiedRoleId != null)
+        {
+            var verifiedRole = _guild.GetRole(RafVerifiedRoleId.Value).Id;
+            pending = !invitedUser.RoleIds.Contains(verifiedRole);
+        }
+
+        return pending;
     }
 }
